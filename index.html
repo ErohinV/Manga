@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Книга Сюжету Манґаки (Мобільна версія)</title>
+    <title>Книга Сюжету Манґаки</title>
     <style>
         :root {
             --bg-dark: #1e1b18;
@@ -48,68 +48,44 @@
             align-items: center;
             width: 100%;
             gap: 15px;
-            flex-wrap: wrap; /* Для мобільних кнопок */
+            flex-wrap: wrap;
         }
 
-        .book-title-input {
+        .inputs-group {
+            display: flex;
+            gap: 15px;
+            width: 60%;
+            flex-grow: 1;
+        }
+
+        .book-input {
             background: transparent;
             border: none;
             border-bottom: 1px dashed #a89484;
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-family: 'Arial', sans-serif;
-            width: 45%;
             outline: none;
             padding: 5px;
-            min-width: 250px;
         }
 
-        .buttons-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        #manga-title { width: 60%; }
+        #manga-author { width: 40%; }
 
-        .btn {
+        .save-btn {
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 10px 20px;
             font-family: 'Arial', sans-serif;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             border-radius: 4px;
             cursor: pointer;
+            background-color: var(--accent);
             transition: opacity 0.2s;
         }
 
-        .btn:hover { opacity: 0.9; }
-        .save-btn { background-color: var(--accent); }
-        .git-btn { background-color: #2da44e; }
-        .git-load { background-color: #0969da; }
-        .secondary-btn { background-color: #6e7681; }
-
-        /* Конфігурація GitHub */
-        .github-config {
-            display: none;
-            background: #221c18;
-            padding: 15px;
-            border-radius: 4px;
-            border: 1px solid #4a3e35;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .github-config input {
-            background: #1a1512;
-            border: 1px solid #5a4f44;
-            color: white;
-            padding: 8px;
-            border-radius: 4px;
-            outline: none;
-            font-size: 0.85rem;
-        }
+        .save-btn:hover { opacity: 0.9; }
 
         /* Контейнер Книги */
         .book-container {
@@ -137,7 +113,7 @@
             position: relative;
         }
 
-        /* Центральний згин (лише для ПК) */
+        /* Згин книги */
         .book-spread::before {
             content: '';
             position: absolute;
@@ -202,82 +178,21 @@
         }
         .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* 📱 МЕДІА-ЗАПИТИ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ (Телефони та планшети) */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .control-panel {
-                padding: 12px;
-            }
-
-            .panel-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .book-title-input {
-                width: 100%;
-                min-width: unset;
-                text-align: center;
-                font-size: 1.4rem;
-            }
-
-            .buttons-group {
-                justify-content: center;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-                width: 100%;
-            }
-
-            .btn {
-                padding: 12px 8px;
-                font-size: 0.8rem;
-                text-align: center;
-            }
-
-            /* Трансформація книги під 1 сторінку для телефону */
-            .book-container {
-                height: calc(100vh - 280px); /* Адаптивна висота під екран мобілки */
-                min-height: 400px;
-            }
-
-            .book-spread::before {
-                display: none; /* Ховаємо центральний згин */
-            }
-
-            .page {
-                width: 100%; /* Сторінка займає весь екран */
-                padding: 25px 20px;
-            }
-
-            /* Ховаємо неактивну сторінку розвороту на мобілках за допомогою JS-класу mobile-hidden */
-            .mobile-hidden {
-                display: none;
-            }
-
-            .page-left, .page-right {
-                background: #fdfbfa; /* Чистий папір без градієнтів згину */
-                border-radius: 4px;
-            }
-
-            .navigation-footer {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-            }
-
-            .nav-btn {
-                width: 100%; /* Великі зручні кнопки для пальців */
-                padding: 12px;
-            }
-            
-            .page-number {
-                order: -1; /* Текст сторінки стає над кнопками */
-                font-size: 1rem;
-            }
+            body { padding: 10px; }
+            .control-panel { padding: 12px; }
+            .panel-row { flex-direction: column; align-items: stretch; }
+            .inputs-group { flex-direction: column; width: 100%; gap: 10px; }
+            .book-input { width: 100% !important; text-align: center; font-size: 1.2rem; }
+            .save-btn { width: 100%; padding: 12px; font-size: 1rem; text-align: center; }
+            .book-container { height: calc(100vh - 280px); min-height: 400px; }
+            .book-spread::before { display: none; }
+            .page { width: 100%; padding: 25px 20px; }
+            .mobile-hidden { display: none; }
+            .page-left, .page-right { background: #fdfbfa; border-radius: 4px; }
+            .navigation-footer { flex-direction: column; gap: 12px; text-align: center; }
+            .nav-btn { width: 100%; padding: 12px; }
+            .page-number { order: -1; font-size: 1rem; }
         }
     </style>
 </head>
@@ -285,20 +200,11 @@
 
 <div class="control-panel">
     <div class="panel-row">
-        <input type="text" id="manga-title" class="book-title-input" placeholder="Назва вашої манги...">
-        <div class="buttons-group">
-            <button class="btn secondary-btn" onclick="toggleGitConfig()">⚙️ GitHub</button>
-            <button class="btn git-load" onclick="loadFromGitHub()">☁️ Завантажити</button>
-            <button class="btn git-btn" onclick="saveToGitHub()">💾 Зберегти</button>
-            <button class="btn save-btn" onclick="downloadBackupJSON()">📥 Копія на ПК</button>
+        <div class="inputs-group">
+            <input type="text" id="manga-title" class="book-input" placeholder="Назва вашої манги...">
+            <input type="text" id="manga-author" class="book-input" placeholder="Ваше ім'я (Автор)...">
         </div>
-    </div>
-
-    <div id="git-config-panel" class="github-config">
-        <input type="password" id="git-token" placeholder="GitHub Токен (PAT)">
-        <input type="text" id="git-user" placeholder="Логін GitHub">
-        <input type="text" id="git-repo" placeholder="Назва репозиторію">
-        <input type="text" id="git-file" placeholder="Назва файлу (напр: manga_story_data.json)" value="manga_story_data.json">
+        <button class="save-btn" onclick="downloadJSON()">📥 Зберегти в JSON</button>
     </div>
 </div>
 
@@ -320,38 +226,40 @@
 </div>
 
 <script>
-    let bookData = { title: "", pages: ["", ""] };
+    let bookData = { title: "", author: "", pages: ["", ""] };
     let currentSpread = 0;
-    let fileSha = "";
     let isMobile = window.innerWidth <= 768;
 
     const leftDOM = document.getElementById('left-page-content');
     const rightDOM = document.getElementById('right-page-content');
     const titleDOM = document.getElementById('manga-title');
+    const authorDOM = document.getElementById('manga-author');
     
     const leftContainer = document.getElementById('dom-left-container');
     const rightContainer = document.getElementById('dom-right-container');
 
-    // Відстеження зміни розміру екрану на випадок повороту телефону
     window.addEventListener('resize', () => {
         isMobile = window.innerWidth <= 768;
         renderSpread();
     });
 
-    document.addEventListener("DOMContentLoaded", () => {
-        if(localStorage.getItem('git_token')) document.getElementById('git-token').value = localStorage.getItem('git_token');
-        if(localStorage.getItem('git_user')) document.getElementById('git-user').value = localStorage.getItem('git_user');
-        if(localStorage.getItem('git_repo')) document.getElementById('git-repo').value = localStorage.getItem('git_repo');
-        if(localStorage.getItem('git_file')) document.getElementById('git-file').value = localStorage.getItem('git_file');
+    // АВТОМАТИЧНЕ ЧИТАННЯ ФАЙЛУ З ГІТХАБУ ПРИ ЗАПУСКУ СТОРІНКИ
+    document.addEventListener("DOMContentLoaded", async () => {
+        const githubJsonUrl = "manga_story_data.json"; 
+        try {
+            // Додаємо випадковий параметр, щоб браузер не кешував стару версію файлу з GitHub
+            const response = await fetch(githubJsonUrl + "?v=" + new Date().getTime());
+            if (response.ok) {
+                bookData = await response.json();
+                titleDOM.value = bookData.title || "";
+                authorDOM.value = bookData.author || "";
+            }
+        } catch (err) {
+            console.log("Локальний файл JSON ще не створено на GitHub.");
+        }
         renderSpread();
     });
 
-    function toggleGitConfig() {
-        const panel = document.getElementById('git-config-panel');
-        panel.style.display = (panel.style.display === 'grid') ? 'none' : 'grid';
-    }
-
-    // Рендер сторінок з урахуванням екрану
     function renderSpread() {
         const leftIdx = currentSpread * 2;
         const rightIdx = currentSpread * 2 + 1;
@@ -363,18 +271,14 @@
         rightDOM.innerText = bookData.pages[rightIdx];
 
         if (isMobile) {
-            // На мобілках показуємо лише одну з двох сторінок залежно від того, де фокус
-            // За замовчуванням показуємо ліву сторінку непарного номера
             leftContainer.classList.remove('mobile-hidden');
             rightContainer.classList.add('mobile-hidden');
             document.getElementById('spread-indicator').innerText = `Сторінка ${leftIdx + 1}`;
         } else {
-            // На ПК показуємо обидві сторінки
             leftContainer.classList.remove('mobile-hidden');
             rightContainer.classList.remove('mobile-hidden');
             document.getElementById('spread-indicator').innerText = `Розворот: ${currentSpread + 1} (Сторінки ${leftIdx + 1}-${rightIdx + 1})`;
         }
-        
         document.getElementById('prev-btn').disabled = (currentSpread === 0);
     }
 
@@ -386,7 +290,6 @@
             if (side === 'left') {
                 bookData.pages[idx] = dom.innerText;
                 if (isMobile) {
-                    // Перемикаємо екран телефону на праву сторінку
                     leftContainer.classList.add('mobile-hidden');
                     rightContainer.classList.remove('mobile-hidden');
                     document.getElementById('spread-indicator').innerText = `Сторінка ${currentSpread * 2 + 2}`;
@@ -414,14 +317,12 @@
         bookData.pages[currentSpread * 2 + 1] = rightDOM.innerText;
         
         if (isMobile) {
-            // Якщо ми на мобільці і дивимось праву сторінку, натискання "Назад" поверне на ліву сторінку ЦЬОГО Ж розвороту
             if (direction === -1 && leftContainer.classList.contains('mobile-hidden')) {
                 rightContainer.classList.add('mobile-hidden');
                 leftContainer.classList.remove('mobile-hidden');
                 document.getElementById('spread-indicator').innerText = `Сторінка ${currentSpread * 2 + 1}`;
                 return;
             }
-            // Якщо ми на лівій сторінці і тиснемо "Вперед", покажемо праву сторінку цього ж розвороту
             if (direction === 1 && rightContainer.classList.contains('mobile-hidden')) {
                 leftContainer.classList.add('mobile-hidden');
                 rightContainer.classList.remove('mobile-hidden');
@@ -436,82 +337,32 @@
     }
 
     function syncCurrentState() {
-        bookData.title = titleDOM.value;
+        bookData.title = titleDOM.value || "";
+        bookData.author = authorDOM.value || "";
         bookData.pages[currentSpread * 2] = leftDOM.innerText;
         bookData.pages[currentSpread * 2 + 1] = rightDOM.innerText;
     }
 
-    function downloadBackupJSON() {
+    // Збереження твору (Завжди зберігає під точною назвою для простої заміни файлу)
+    function downloadJSON() {
         syncCurrentState();
+        
+        while(bookData.pages.length > 2 && bookData.pages[bookData.pages.length - 1] === "" && bookData.pages[bookData.pages.length - 2] === "") {
+            bookData.pages.pop();
+            bookData.pages.pop();
+        }
+
         const jsonString = JSON.stringify(bookData, null, 4);
         const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        const safeTitle = bookData.title ? bookData.title.replace(/\s+/g, '_') : "manga";
-        link.download = `${safeTitle}_story_backup.json`;
-        link.click();
-    }
-
-    function getGitParams() {
-        const token = document.getElementById('git-token').value;
-        const user = document.getElementById('git-user').value;
-        const repo = document.getElementById('git-repo').value;
-        const file = document.getElementById('git-file').value || "manga_story_data.json";
-
-        localStorage.setItem('git_token', token);
-        localStorage.setItem('git_user', user);
-        localStorage.setItem('git_repo', repo);
-        localStorage.setItem('git_file', file);
-
-        return { token, user, repo, file };
-    }
-
-    async function loadFromGitHub() {
-        const p = getGitParams();
-        if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
-        const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
-        try {
-            const res = await fetch(url, { headers: { 'Authorization': `token ${p.token}` } });
-            if(res.status === 404) return alert("Файл не знайдено в репозиторії.");
-            const data = await res.json();
-            fileSha = data.sha;
-            const decodedContent = decodeURIComponent(escape(atob(data.content)));
-            bookData = JSON.parse(decodedContent);
-            titleDOM.value = bookData.title || "";
-            currentSpread = 0;
-            renderSpread();
-            alert("☁️ Сюжет завантажено!");
-        } catch(err) { alert("Помилка завантаження."); }
-    }
-
-    async function saveToGitHub() {
-        const p = getGitParams();
-        if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
-        syncCurrentState();
-        const jsonString = JSON.stringify(bookData, null, 4);
-        const b64Content = btoa(unescape(encodeURIComponent(jsonString)));
-        const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
         
-        try {
-            const checkRes = await fetch(url, { headers: { 'Authorization': `token ${p.token}` } });
-            if(checkRes.ok) { const checkData = await checkRes.json(); fileSha = checkData.sha; }
-        } catch(e) {}
-
-        const bodyData = { message: "Update via Mobile Manga App", content: b64Content };
-        if(fileSha) bodyData.sha = fileSha;
-
-        try {
-            const res = await fetch(url, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${p.token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(bodyData)
-            });
-            if(res.ok) {
-                const resData = await res.json();
-                fileSha = resData.content.sha;
-                alert("💾 Успішно збережено на GitHub!");
-            } else { alert("Помилка збереження."); }
-        } catch(err) { alert("Помилка мережі."); }
+        // Назва зафіксована, щоб ти міг просто перетягнути скачаний файл у свій репозиторій GitHub і замінити старий
+        link.download = "manga_story_data.json";
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 </script>
 </body>
