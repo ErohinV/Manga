@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Книга Сюжету Манґаки</title>
+    <title>Книга Сюжету Манґаки (Авто-GitHub)</title>
     <style>
         :root {
             --bg-dark: #1e1b18;
@@ -54,7 +54,7 @@
         .inputs-group {
             display: flex;
             gap: 15px;
-            width: 60%;
+            width: 50%;
             flex-grow: 1;
         }
 
@@ -72,20 +72,52 @@
         #manga-title { width: 60%; }
         #manga-author { width: 40%; }
 
-        .save-btn {
+        .buttons-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 15px;
             font-family: 'Arial', sans-serif;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-radius: 4px;
             cursor: pointer;
-            background-color: var(--accent);
             transition: opacity 0.2s;
         }
 
-        .save-btn:hover { opacity: 0.9; }
+        .btn:hover { opacity: 0.9; }
+        .git-save-btn { background-color: #2da44e; }
+        .git-load-btn { background-color: #0969da; }
+        .secondary-btn { background-color: #6e7681; }
+        .pc-save-btn { background-color: var(--accent); }
+
+        /* Конфігурація GitHub */
+        .github-config {
+            display: none;
+            background: #221c18;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #4a3e35;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .github-config input {
+            background: #1a1512;
+            border: 1px solid #5a4f44;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            outline: none;
+            font-size: 0.85rem;
+        }
 
         /* Контейнер Книги */
         .book-container {
@@ -184,7 +216,8 @@
             .panel-row { flex-direction: column; align-items: stretch; }
             .inputs-group { flex-direction: column; width: 100%; gap: 10px; }
             .book-input { width: 100% !important; text-align: center; font-size: 1.2rem; }
-            .save-btn { width: 100%; padding: 12px; font-size: 1rem; text-align: center; }
+            .buttons-group { justify-content: center; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
+            .btn { padding: 12px 8px; font-size: 0.8rem; text-align: center; }
             .book-container { height: calc(100vh - 280px); min-height: 400px; }
             .book-spread::before { display: none; }
             .page { width: 100%; padding: 25px 20px; }
@@ -204,7 +237,19 @@
             <input type="text" id="manga-title" class="book-input" placeholder="Назва вашої манги...">
             <input type="text" id="manga-author" class="book-input" placeholder="Ваше ім'я (Автор)...">
         </div>
-        <button class="save-btn" onclick="downloadJSON()">📥 Зберегти в JSON</button>
+        <div class="buttons-group">
+            <button class="btn secondary-btn" onclick="toggleGitConfig()">⚙️ GitHub</button>
+            <button class="btn git-load-btn" onclick="loadFromGitHub()">☁️ Завантажити з GH</button>
+            <button class="btn git-save-btn" onclick="saveToGitHub()">💾 Зберегти на GitHub</button>
+            <button class="btn pc-save-btn" onclick="downloadJSON()">📥 Копія на ПК</button>
+        </div>
+    </div>
+
+    <div id="git-config-panel" class="github-config">
+        <input type="password" id="git-token" placeholder="GitHub Токен (PAT)">
+        <input type="text" id="git-user" placeholder="Логін GitHub">
+        <input type="text" id="git-repo" placeholder="Назва репозиторію">
+        <input type="text" id="git-file" placeholder="Назва файлу" value="manga_story_data.json">
     </div>
 </div>
 
@@ -228,6 +273,7 @@
 <script>
     let bookData = { title: "", author: "", pages: ["", ""] };
     let currentSpread = 0;
+    let fileSha = ""; // Потрібно для оновлення файлів через API
     let isMobile = window.innerWidth <= 768;
 
     const leftDOM = document.getElementById('left-page-content');
@@ -243,22 +289,18 @@
         renderSpread();
     });
 
-    // АВТОМАТИЧНЕ ЧИТАННЯ ФАЙЛУ З ГІТХАБУ ПРИ ЗАПУСКУ СТОРІНКИ
-    document.addEventListener("DOMContentLoaded", async () => {
-        const githubJsonUrl = "manga_story_data.json"; 
-        try {
-            // Додаємо випадковий параметр, щоб браузер не кешував стару версію файлу з GitHub
-            const response = await fetch(githubJsonUrl + "?v=" + new Date().getTime());
-            if (response.ok) {
-                bookData = await response.json();
-                titleDOM.value = bookData.title || "";
-                authorDOM.value = bookData.author || "";
-            }
-        } catch (err) {
-            console.log("Локальний файл JSON ще не створено на GitHub.");
-        }
+    document.addEventListener("DOMContentLoaded", () => {
+        if(localStorage.getItem('git_token')) document.getElementById('git-token').value = localStorage.getItem('git_token');
+        if(localStorage.getItem('git_user')) document.getElementById('git-user').value = localStorage.getItem('git_user');
+        if(localStorage.getItem('git_repo')) document.getElementById('git-repo').value = localStorage.getItem('git_repo');
+        if(localStorage.getItem('git_file')) document.getElementById('git-file').value = localStorage.getItem('git_file');
         renderSpread();
     });
+
+    function toggleGitConfig() {
+        const panel = document.getElementById('git-config-panel');
+        panel.style.display = (panel.style.display === 'grid') ? 'none' : 'grid';
+    }
 
     function renderSpread() {
         const leftIdx = currentSpread * 2;
@@ -343,26 +385,87 @@
         bookData.pages[currentSpread * 2 + 1] = rightDOM.innerText;
     }
 
-    // Збереження твору (Завжди зберігає під точною назвою для простої заміни файлу)
+    // --- ЛОКАЛЬНЕ ЗБЕРЕЖЕННЯ НА ПК ---
     function downloadJSON() {
         syncCurrentState();
-        
         while(bookData.pages.length > 2 && bookData.pages[bookData.pages.length - 1] === "" && bookData.pages[bookData.pages.length - 2] === "") {
             bookData.pages.pop();
             bookData.pages.pop();
         }
-
         const jsonString = JSON.stringify(bookData, null, 4);
         const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        
-        // Назва зафіксована, щоб ти міг просто перетягнути скачаний файл у свій репозиторій GitHub і замінити старий
         link.download = "manga_story_data.json";
-        
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    // --- АВТОМАТИЗАЦІЯ GITHUB API ---
+    function getGitParams() {
+        const token = document.getElementById('git-token').value;
+        const user = document.getElementById('git-user').value;
+        const repo = document.getElementById('git-repo').value;
+        const file = document.getElementById('git-file').value || "manga_story_data.json";
+
+        localStorage.setItem('git_token', token);
+        localStorage.setItem('git_user', user);
+        localStorage.setItem('git_repo', repo);
+        localStorage.setItem('git_file', file);
+
+        return { token, user, repo, file };
+    }
+
+    async function loadFromGitHub() {
+        const p = getGitParams();
+        if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
+        const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
+        try {
+            const res = await fetch(url, { headers: { 'Authorization': `token ${p.token}` } });
+            if(res.status === 404) return alert("Файл не знайдено на GitHub.");
+            const data = await res.json();
+            fileSha = data.sha; // Обов'язково записуємо SHA версію
+            const decodedContent = decodeURIComponent(escape(atob(data.content)));
+            bookData = JSON.parse(decodedContent);
+            titleDOM.value = bookData.title || "";
+            authorDOM.value = bookData.author || "";
+            currentSpread = 0;
+            renderSpread();
+            alert("☁️ Сюжет успішно завантажено з GitHub!");
+        } catch(err) { alert("Помилка завантаження. Перевірте дані конфігурації."); }
+    }
+
+    async function saveToGitHub() {
+        const p = getGitParams();
+        if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
+        syncCurrentState();
+        
+        const jsonString = JSON.stringify(bookData, null, 4);
+        const b64Content = btoa(unescape(encodeURIComponent(jsonString)));
+        const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
+        
+        // Перевіряємо актуальний SHA перед записом
+        try {
+            const checkRes = await fetch(url, { headers: { 'Authorization': `token ${p.token}` } });
+            if(checkRes.ok) { const checkData = await checkRes.ok ? await checkRes.json() : null; if(checkData) fileSha = checkData.sha; }
+        } catch(e) {}
+
+        const bodyData = { message: "Update via Manga Book App", content: b64Content };
+        if(fileSha) bodyData.sha = fileSha;
+
+        try {
+            const res = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${p.token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyData)
+            });
+            if(res.ok) {
+                const resData = await res.json();
+                fileSha = resData.content.sha; // Оновлюємо SHA для наступних збережень
+                alert("💾 Успішно автоматично збережено на GitHub!");
+            } else { alert("Помилка збереження. Перевірте права токена (має бути увімкнено 'repo')."); }
+        } catch(err) { alert("Помилка мережі при спробі зв'язку з GitHub API."); }
     }
 </script>
 </body>
