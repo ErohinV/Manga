@@ -1,1 +1,222 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планувальник Сюжету Манги</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --accent-color: #ff4757;
+            --muted-text: #a0a0a0;
+            --border-color: #404040;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            color: var(--muted-text);
+            margin: 5px 0 0 0;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .character-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 4px;
+        }
+
+        .character-card h3 {
+            margin-top: 0;
+            color: #fff;
+        }
+
+        textarea, input {
+            width: 100%;
+            background-color: #1a1a1a;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            margin-top: 5px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .timeline-item {
+            border-left: 2px solid var(--border-color);
+            padding-left: 20px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted-text);
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Майстер Сюжету Манги</h1>
+        <p>Простір для створення твого наступного шедевра</p>
+    </header>
+
+    <section>
+        <h2>Загальна Концепція</h2>
+        <div class="grid">
+            <div>
+                <label><strong>Назва проекту:</strong></label>
+                <input type="text" placeholder="Наприклад: Атака Титанів, Токійський Гуль...">
+            </div>
+            <div>
+                <label><strong>Жанри:</strong></label>
+                <input type="text" placeholder="Сьонен, темне фентезі, детектив, комедія...">
+            </div>
+        </div>
+        <div style="margin-top: 15px;">
+            <label><strong>Логлайн (Короткий опис сюжету в 1-2 реченнях):</strong></label>
+            <textarea placeholder="Про що ця історія? Хто головний герой, який у нього конфлікт і що стоїть на кону?"></textarea>
+        </div>
+    </section>
+
+    <section>
+        <h2>Світ та Правила (Worldbuilding)</h2>
+        <div class="grid">
+            <div>
+                <label><strong>Локації:</strong></label>
+                <textarea placeholder="Опишіть головні місця подій (міста, планети, таємні бази)..."></textarea>
+            </div>
+            <div>
+                <label><strong>Система сил / Правила світу:</strong></label>
+                <textarea placeholder="Як працює магія, технології чи суперздібності? Які є обмеження?"></textarea>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Головні Персонажі</h2>
+        <div class="grid">
+            <div class="character-card">
+                <h3>Протагоніст (Головний герой)</h3>
+                <label>Ім'я:</label> <input type="text" placeholder="Ім'я">
+                <label style="margin-top: 10px; display:block;">Характер та мотивація:</label>
+                <textarea placeholder="Чого він/вона хоче? Яка головна слабкість?"></textarea>
+            </div>
+
+            <div class="character-card">
+                <h3>Антагоніст (Супротивник)</h3>
+                <label>Ім'я:</label> <input type="text" placeholder="Ім'я">
+                <label style="margin-top: 10px; display:block;">Мотивація та філософія:</label>
+                <textarea placeholder="Чому він протистоїть герою? У чому його правда?"></textarea>
+            </div>
+
+            <div class="character-card">
+                <h3>Важливий союзник / Ментор</h3>
+                <label>Ім'я:</label> <input type="text" placeholder="Ім'я">
+                <label style="margin-top: 10px; display:block;">Роль у сюжеті:</label>
+                <textarea placeholder="Як допомагає герою розвиватися?"></textarea>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Хронологія та Сюжетні Арки</h2>
+        
+        <div class="timeline-item">
+            <h3>1. Зав'язка (Вступ)</h3>
+            <textarea placeholder="Знайомство зі світом та героєм. Подія, яка змушує героя почати подорож (тригер)."></textarea>
+        </div>
+
+        <div class="timeline-item">
+            <h3>2. Розвиток дії (Основні арки)</h3>
+            <textarea placeholder="Перші битви, нові друзі, відкриття таємниць. Сюжетні повороти."></textarea>
+        </div>
+
+        <div class="timeline-item">
+            <h3>3. Кульмінація</h3>
+            <textarea placeholder="Фінальна битва або вирішальний момент всієї історії. Максимальна напруга."></textarea>
+        </div>
+
+        <div class="timeline-item">
+            <h3>4. Розв'язка</h3>
+            <textarea placeholder="Наслідки кульмінації. Що сталося зі світом та героями далі? Натяк на продовження?"></textarea>
+        </div>
+    </section>
+
+    <div class="footer">
+        <p>Зроблено з 🖤 для майбутніх манґак. Надихайся та твори!</p>
+    </div>
+</div>
+
+</body>
+</html>
