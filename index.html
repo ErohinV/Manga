@@ -3,220 +3,415 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Планувальник Сюжету Манги</title>
+    <title>Книга Сюжету Манґаки (GitHub JSON)</title>
     <style>
         :root {
-            --bg-color: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text-color: #ffffff;
-            --accent-color: #ff4757;
-            --muted-text: #a0a0a0;
-            --border-color: #404040;
+            --bg-dark: #1e1b18;
+            --book-base: #fcfaf7;
+            --line-color: #e6ded5;
+            --text-color: #2c2520;
+            --accent: #5a1212;
+            --panel-bg: #2d2621;
+            --git-blue: #24292e;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: var(--bg-dark);
             margin: 0;
             padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            border-bottom: 3px solid var(--accent-color);
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        header p {
-            color: var(--muted-text);
-            margin: 5px 0 0 0;
-        }
-
-        section {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        h2 {
-            color: var(--accent-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .character-card {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-left: 4px solid var(--accent-color);
-            border-radius: 4px;
-        }
-
-        .character-card h3 {
-            margin-top: 0;
-            color: #fff;
-        }
-
-        textarea, input {
-            width: 100%;
-            background-color: #1a1a1a;
-            border: 1px solid var(--border-color);
-            color: #fff;
-            padding: 10px;
-            border-radius: 4px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
             box-sizing: border-box;
-            font-family: inherit;
-            margin-top: 5px;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
+        .control-panel {
+            width: 100%;
+            max-width: 950px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-sizing: border-box;
         }
 
-        .timeline-item {
-            border-left: 2px solid var(--border-color);
-            padding-left: 20px;
+        .panel-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .book-title-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed #a89484;
+            color: #fff;
+            font-size: 1.2rem;
+            font-family: 'Arial', sans-serif;
+            width: 50%;
+            outline: none;
+            padding: 5px;
+        }
+
+        .buttons-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover { opacity: 0.9; }
+        .save-btn { background-color: var(--accent); }
+        .git-btn { background-color: #2da44e; }
+        .git-load { background-color: #0969da; }
+        .secondary-btn { background-color: #6e7681; }
+
+        /* Налаштування зв'язку з Гітхабом */
+        .github-config {
+            display: none;
+            background: #221c18;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #4a3e35;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .github-config input {
+            background: #1a1512;
+            border: 1px solid #5a4f44;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        .book-container {
+            width: 100%;
+            max-width: 950px;
+            height: 580px;
             position: relative;
-            margin-bottom: 20px;
         }
 
-        .timeline-item::before {
+        .book-spread {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background-color: var(--book-base);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .page {
+            width: 50%;
+            height: 100%;
+            padding: 40px 45px 60px 45px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .book-spread::before {
             content: '';
             position: absolute;
-            left: -6px;
-            top: 8px;
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
+            left: 50%; top: 0;
+            width: 2px; height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.15), rgba(0,0,0,0.02) 20%, rgba(255,255,255,0.15) 50%, rgba(0,0,0,0.15));
+            z-index: 5;
         }
 
-        .footer {
-            text-align: center;
-            color: var(--muted-text);
-            font-size: 0.9rem;
-            margin-top: 50px;
+        .page-left {
+            background: linear-gradient(to right, #fdfbfa 96%, #eae3da 100%);
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
         }
+
+        .page-right {
+            background: linear-gradient(to left, #fdfbfa 96%, #eae3da 100%);
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .page-content {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            background-image: linear-gradient(transparent 31px, var(--line-color) 31px);
+            background-size: 100% 32px;
+            line-height: 32px;
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            resize: none;
+            overflow: hidden;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .navigation-footer {
+            width: 100%;
+            max-width: 950px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #a89484;
+            font-family: 'Arial', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .nav-btn {
+            background: #2d2621;
+            border: 1px solid #4a3e35;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Майстер Сюжету Манги</h1>
-        <p>Простір для створення твого наступного шедевра</p>
-    </header>
-
-    <section>
-        <h2>Загальна Концепція</h2>
-        <div class="grid">
-            <div>
-                <label><strong>Назва проекту:</strong></label>
-                <input type="text" placeholder="Наприклад: Атака Титанів, Токійський Гуль...">
-            </div>
-            <div>
-                <label><strong>Жанри:</strong></label>
-                <input type="text" placeholder="Сьонен, темне фентезі, детектив, комедія...">
-            </div>
+<div class="control-panel">
+    <div class="panel-row">
+        <input type="text" id="manga-title" class="book-title-input" placeholder="Назва вашої манги...">
+        <div class="buttons-group">
+            <button class="btn secondary-btn" onclick="toggleGitConfig()">⚙️ Налаштування GitHub</button>
+            <button class="btn git-load" onclick="loadFromGitHub()">☁️ Завантажити з GitHub</button>
+            <button class="btn git-btn" onclick="saveToGitHub()">💾 Зберегти на GitHub</button>
+            <button class="btn save-btn" onclick="downloadBackupJSON()">📥 Скачати копію на ПК</button>
         </div>
-        <div style="margin-top: 15px;">
-            <label><strong>Логлайн (Короткий опис сюжету в 1-2 реченнях):</strong></label>
-            <textarea placeholder="Про що ця історія? Хто головний герой, який у нього конфлікт і що стоїть на кону?"></textarea>
-        </div>
-    </section>
+    </div>
 
-    <section>
-        <h2>Світ та Правила (Worldbuilding)</h2>
-        <div class="grid">
-            <div>
-                <label><strong>Локації:</strong></label>
-                <textarea placeholder="Опишіть головні місця подій (міста, планети, таємні бази)..."></textarea>
-            </div>
-            <div>
-                <label><strong>Система сил / Правила світу:</strong></label>
-                <textarea placeholder="Як працює магія, технології чи суперздібності? Які є обмеження?"></textarea>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Головні Персонажі</h2>
-        <div class="grid">
-            <div class="character-card">
-                <h3>Протагоніст (Головний герой)</h3>
-                <label>Ім'я:</label> <input type="text" placeholder="Ім'я">
-                <label style="margin-top: 10px; display:block;">Характер та мотивація:</label>
-                <textarea placeholder="Чого він/вона хоче? Яка головна слабкість?"></textarea>
-            </div>
-
-            <div class="character-card">
-                <h3>Антагоніст (Супротивник)</h3>
-                <label>Ім'я:</label> <input type="text" placeholder="Ім'я">
-                <label style="margin-top: 10px; display:block;">Мотивація та філософія:</label>
-                <textarea placeholder="Чому він протистоїть герою? У чому його правда?"></textarea>
-            </div>
-
-            <div class="character-card">
-                <h3>Важливий союзник / Ментор</h3>
-                <label>Ім'я:</label> <input type="text" placeholder="Ім'я">
-                <label style="margin-top: 10px; display:block;">Роль у сюжеті:</label>
-                <textarea placeholder="Як допомагає герою розвиватися?"></textarea>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Хронологія та Сюжетні Арки</h2>
-        
-        <div class="timeline-item">
-            <h3>1. Зав'язка (Вступ)</h3>
-            <textarea placeholder="Знайомство зі світом та героєм. Подія, яка змушує героя почати подорож (тригер)."></textarea>
-        </div>
-
-        <div class="timeline-item">
-            <h3>2. Розвиток дії (Основні арки)</h3>
-            <textarea placeholder="Перші битви, нові друзі, відкриття таємниць. Сюжетні повороти."></textarea>
-        </div>
-
-        <div class="timeline-item">
-            <h3>3. Кульмінація</h3>
-            <textarea placeholder="Фінальна битва або вирішальний момент всієї історії. Максимальна напруга."></textarea>
-        </div>
-
-        <div class="timeline-item">
-            <h3>4. Розв'язка</h3>
-            <textarea placeholder="Наслідки кульмінації. Що сталося зі світом та героями далі? Натяк на продовження?"></textarea>
-        </div>
-    </section>
-
-    <div class="footer">
-        <p>Зроблено з 🖤 для майбутніх манґак. Надихайся та твори!</p>
+    <div id="git-config-panel" class="github-config">
+        <input type="password" id="git-token" placeholder="GitHub Токен (PAT)">
+        <input type="text" id="git-user" placeholder="Логін GitHub">
+        <input type="text" id="git-repo" placeholder="Назва репозиторію">
+        <input type="text" id="git-file" placeholder="Назва файлу (напр: manga_story_data.json)" value="manga_story_data.json">
     </div>
 </div>
 
+<div class="book-container">
+    <div class="book-spread">
+        <div class="page page-left">
+            <div class="page-content" contenteditable="true" id="left-page-content" oninput="handleInput('left')" onkeydown="handleKeyDown(event, 'left')"></div>
+        </div>
+        <div class="page page-right">
+            <div class="page-content" contenteditable="true" id="right-page-content" oninput="handleInput('right')" onkeydown="handleKeyDown(event, 'right')"></div>
+        </div>
+    </div>
+</div>
+
+<div class="navigation-footer">
+    <button class="nav-btn" id="prev-btn" onclick="changeSpread(-1)">◀ Попередній розворот</button>
+    <span class="page-number" id="spread-indicator">Розворот: 1 (Сторінки 1-2)</span>
+    <button class="nav-btn" id="next-btn" onclick="changeSpread(1)">Наступний розворот ▶</button>
+</div>
+
+<script>
+    let bookData = { title: "", pages: ["", ""] };
+    let currentSpread = 0;
+    let fileSha = ""; // Потрібно для GitHub API щоб перезаписувати існуючий файл
+
+    const leftDOM = document.getElementById('left-page-content');
+    const rightDOM = document.getElementById('right-page-content');
+    const titleDOM = document.getElementById('manga-title');
+
+    // Завантаження збережених налаштувань GitHub з пам'яті браузера
+    document.addEventListener("DOMContentLoaded", () => {
+        if(localStorage.getItem('git_token')) document.getElementById('git-token').value = localStorage.getItem('git_token');
+        if(localStorage.getItem('git_user')) document.getElementById('git-user').value = localStorage.getItem('git_user');
+        if(localStorage.getItem('git_repo')) document.getElementById('git-repo').value = localStorage.getItem('git_repo');
+        if(localStorage.getItem('git_file')) document.getElementById('git-file').value = localStorage.getItem('git_file');
+        renderSpread();
+    });
+
+    function toggleGitConfig() {
+        const panel = document.getElementById('git-config-panel');
+        panel.style.display = (panel.style.display === 'grid') ? 'none' : 'grid';
+    }
+
+    function renderSpread() {
+        const leftIdx = currentSpread * 2;
+        const rightIdx = currentSpread * 2 + 1;
+        if (bookData.pages[leftIdx] === undefined) bookData.pages[leftIdx] = "";
+        if (bookData.pages[rightIdx] === undefined) bookData.pages[rightIdx] = "";
+
+        leftDOM.innerText = bookData.pages[leftIdx];
+        rightDOM.innerText = bookData.pages[rightIdx];
+
+        document.getElementById('spread-indicator').innerText = `Розворот: ${currentSpread + 1} (Сторінки ${leftIdx + 1}-${rightIdx + 1})`;
+        document.getElementById('prev-btn').disabled = (currentSpread === 0);
+    }
+
+    function handleInput(side) {
+        const idx = currentSpread * 2 + (side === 'left' ? 0 : 1);
+        const dom = side === 'left' ? leftDOM : rightDOM;
+
+        if (dom.scrollHeight > dom.clientHeight) {
+            if (side === 'left') {
+                bookData.pages[idx] = dom.innerText; 
+                rightDOM.focus();
+            } else {
+                bookData.pages[idx] = dom.innerText;
+                currentSpread++;
+                renderSpread();
+                leftDOM.focus();
+            }
+        } else {
+            bookData.pages[idx] = dom.innerText;
+        }
+    }
+
+    function handleKeyDown(e, side) {
+        const dom = side === 'left' ? leftDOM : rightDOM;
+        if (e.key === 'Backspace' || e.key === 'Delete' || e.key.startsWith('Arrow')) return;
+        if (dom.scrollHeight > dom.clientHeight) { e.preventDefault(); handleInput(side); }
+    }
+
+    function changeSpread(direction) {
+        bookData.pages[currentSpread * 2] = leftDOM.innerText;
+        bookData.pages[currentSpread * 2 + 1] = rightDOM.innerText;
+        currentSpread += direction;
+        if (currentSpread < 0) currentSpread = 0;
+        renderSpread();
+    }
+
+    function syncCurrentState() {
+        bookData.title = titleDOM.value;
+        bookData.pages[currentSpread * 2] = leftDOM.innerText;
+        bookData.pages[currentSpread * 2 + 1] = rightDOM.innerText;
+    }
+
+    // --- ЛОКАЛЬНЕ СКАЧУВАННЯ НА ПКА ---
+    function downloadBackupJSON() {
+        syncCurrentState();
+        const jsonString = JSON.stringify(bookData, null, 4);
+        const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        
+        const safeTitle = bookData.title ? bookData.title.replace(/\s+/g, '_') : "manga";
+        link.download = `${safeTitle}_story_backup.json`;
+        link.click();
+    }
+
+    // --- ІНТЕГРАЦІЯ З GITHUB API ---
+    function getGitParams() {
+        const token = document.getElementById('git-token').value;
+        const user = document.getElementById('git-user').value;
+        const repo = document.getElementById('git-repo').value;
+        const file = document.getElementById('git-file').value || "manga_story_data.json";
+
+        // Зберігаємо налаштування в браузері
+        localStorage.setItem('git_token', token);
+        localStorage.setItem('git_user', user);
+        localStorage.setItem('git_repo', repo);
+        localStorage.setItem('git_file', file);
+
+        return { token, user, repo, file };
+    }
+
+    async function loadFromGitHub() {
+        const p = getGitParams();
+        if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
+
+        const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
+        try {
+            const res = await fetch(url, {
+                headers: { 'Authorization': `token ${p.token}` }
+            });
+            if(res.status === 404) {
+                alert("Файл не знайдено в репозиторії. Буде створено новий при збереженні.");
+                return;
+            }
+            const data = await res.json();
+            fileSha = data.sha; // запам'ятовуємо SHA версію
+            
+            // Декодуємо контент з base64
+            const decodedContent = decodeURIComponent(escape(atob(data.content)));
+            bookData = JSON.parse(decodedContent);
+            titleDOM.value = bookData.title || "";
+            currentSpread = 0;
+            renderSpread();
+            alert("☁️ Дані успішно завантажено з GitHub!");
+        } catch(err) {
+            alert("Помилка завантаження. Перевірте токен або назву репозиторію.");
+        }
+    }
+
+    async function saveToGitHub() {
+        const p = getGitParams();
+        if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
+
+        syncCurrentState();
+        const jsonString = JSON.stringify(bookData, null, 4);
+        // Кодуємо в base64 з підтримкою кирилиці
+        const b64Content = btoa(unescape(encodeURIComponent(jsonString)));
+
+        const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
+        
+        // Спочатку робимо запит щоб отримати актуальний SHA, якщо файл вже є
+        try {
+            const checkRes = await fetch(url, { headers: { 'Authorization': `token ${p.token}` } });
+            if(checkRes.ok) {
+                const checkData = await checkRes.json();
+                fileSha = checkData.sha;
+            }
+        } catch(e) {}
+
+        const bodyData = {
+            message: "Оновлення сюжету манги via Manga Book App",
+            content: b64Content
+        };
+        if(fileSha) bodyData.sha = fileSha;
+
+        try {
+            const res = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${p.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bodyData)
+            });
+            if(res.ok) {
+                const resData = await res.json();
+                fileSha = resData.content.sha;
+                alert("💾 Сюжет успішно синхронізовано та збережено на GitHub!");
+            } else {
+                alert("Помилка збереження. Перевірте права токена.");
+            }
+        } catch(err) {
+            alert("Не вдалося підключитися до GitHub API.");
+        }
+    }
+</script>
 </body>
 </html>
