@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Книга Сюжету Манґаки (GitHub JSON)</title>
+    <title>Книга Сюжету Манґаки (Мобільна версія)</title>
     <style>
         :root {
             --bg-dark: #1e1b18;
@@ -12,7 +12,6 @@
             --text-color: #2c2520;
             --accent: #5a1212;
             --panel-bg: #2d2621;
-            --git-blue: #24292e;
         }
 
         body {
@@ -28,6 +27,7 @@
             box-sizing: border-box;
         }
 
+        /* Панель керування */
         .control-panel {
             width: 100%;
             max-width: 950px;
@@ -48,6 +48,7 @@
             align-items: center;
             width: 100%;
             gap: 15px;
+            flex-wrap: wrap; /* Для мобільних кнопок */
         }
 
         .book-title-input {
@@ -57,14 +58,16 @@
             color: #fff;
             font-size: 1.2rem;
             font-family: 'Arial', sans-serif;
-            width: 50%;
+            width: 45%;
             outline: none;
             padding: 5px;
+            min-width: 250px;
         }
 
         .buttons-group {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -85,7 +88,7 @@
         .git-load { background-color: #0969da; }
         .secondary-btn { background-color: #6e7681; }
 
-        /* Налаштування зв'язку з Гітхабом */
+        /* Конфігурація GitHub */
         .github-config {
             display: none;
             background: #221c18;
@@ -108,6 +111,7 @@
             font-size: 0.85rem;
         }
 
+        /* Контейнер Книги */
         .book-container {
             width: 100%;
             max-width: 950px;
@@ -133,6 +137,7 @@
             position: relative;
         }
 
+        /* Центральний згин (лише для ПК) */
         .book-spread::before {
             content: '';
             position: absolute;
@@ -183,17 +188,97 @@
             color: #a89484;
             font-family: 'Arial', sans-serif;
             font-size: 0.95rem;
+            gap: 10px;
         }
 
         .nav-btn {
             background: #2d2621;
             border: 1px solid #4a3e35;
             color: #fff;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 0.9rem;
         }
         .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* 📱 МЕДІА-ЗАПИТИ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ (Телефони та планшети) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .control-panel {
+                padding: 12px;
+            }
+
+            .panel-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .book-title-input {
+                width: 100%;
+                min-width: unset;
+                text-align: center;
+                font-size: 1.4rem;
+            }
+
+            .buttons-group {
+                justify-content: center;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                width: 100%;
+            }
+
+            .btn {
+                padding: 12px 8px;
+                font-size: 0.8rem;
+                text-align: center;
+            }
+
+            /* Трансформація книги під 1 сторінку для телефону */
+            .book-container {
+                height: calc(100vh - 280px); /* Адаптивна висота під екран мобілки */
+                min-height: 400px;
+            }
+
+            .book-spread::before {
+                display: none; /* Ховаємо центральний згин */
+            }
+
+            .page {
+                width: 100%; /* Сторінка займає весь екран */
+                padding: 25px 20px;
+            }
+
+            /* Ховаємо неактивну сторінку розвороту на мобілках за допомогою JS-класу mobile-hidden */
+            .mobile-hidden {
+                display: none;
+            }
+
+            .page-left, .page-right {
+                background: #fdfbfa; /* Чистий папір без градієнтів згину */
+                border-radius: 4px;
+            }
+
+            .navigation-footer {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .nav-btn {
+                width: 100%; /* Великі зручні кнопки для пальців */
+                padding: 12px;
+            }
+            
+            .page-number {
+                order: -1; /* Текст сторінки стає над кнопками */
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -202,10 +287,10 @@
     <div class="panel-row">
         <input type="text" id="manga-title" class="book-title-input" placeholder="Назва вашої манги...">
         <div class="buttons-group">
-            <button class="btn secondary-btn" onclick="toggleGitConfig()">⚙️ Налаштування GitHub</button>
-            <button class="btn git-load" onclick="loadFromGitHub()">☁️ Завантажити з GitHub</button>
-            <button class="btn git-btn" onclick="saveToGitHub()">💾 Зберегти на GitHub</button>
-            <button class="btn save-btn" onclick="downloadBackupJSON()">📥 Скачати копію на ПК</button>
+            <button class="btn secondary-btn" onclick="toggleGitConfig()">⚙️ GitHub</button>
+            <button class="btn git-load" onclick="loadFromGitHub()">☁️ Завантажити</button>
+            <button class="btn git-btn" onclick="saveToGitHub()">💾 Зберегти</button>
+            <button class="btn save-btn" onclick="downloadBackupJSON()">📥 Копія на ПК</button>
         </div>
     </div>
 
@@ -219,31 +304,40 @@
 
 <div class="book-container">
     <div class="book-spread">
-        <div class="page page-left">
+        <div class="page page-left" id="dom-left-container">
             <div class="page-content" contenteditable="true" id="left-page-content" oninput="handleInput('left')" onkeydown="handleKeyDown(event, 'left')"></div>
         </div>
-        <div class="page page-right">
+        <div class="page page-right" id="dom-right-container">
             <div class="page-content" contenteditable="true" id="right-page-content" oninput="handleInput('right')" onkeydown="handleKeyDown(event, 'right')"></div>
         </div>
     </div>
 </div>
 
 <div class="navigation-footer">
-    <button class="nav-btn" id="prev-btn" onclick="changeSpread(-1)">◀ Попередній розворот</button>
-    <span class="page-number" id="spread-indicator">Розворот: 1 (Сторінки 1-2)</span>
-    <button class="nav-btn" id="next-btn" onclick="changeSpread(1)">Наступний розворот ▶</button>
+    <button class="nav-btn" id="prev-btn" onclick="changeSpread(-1)">◀ Назад</button>
+    <span class="page-number" id="spread-indicator">Завантаження...</span>
+    <button class="nav-btn" id="next-btn" onclick="changeSpread(1)">Вперед ▶</button>
 </div>
 
 <script>
     let bookData = { title: "", pages: ["", ""] };
     let currentSpread = 0;
-    let fileSha = ""; // Потрібно для GitHub API щоб перезаписувати існуючий файл
+    let fileSha = "";
+    let isMobile = window.innerWidth <= 768;
 
     const leftDOM = document.getElementById('left-page-content');
     const rightDOM = document.getElementById('right-page-content');
     const titleDOM = document.getElementById('manga-title');
+    
+    const leftContainer = document.getElementById('dom-left-container');
+    const rightContainer = document.getElementById('dom-right-container');
 
-    // Завантаження збережених налаштувань GitHub з пам'яті браузера
+    // Відстеження зміни розміру екрану на випадок повороту телефону
+    window.addEventListener('resize', () => {
+        isMobile = window.innerWidth <= 768;
+        renderSpread();
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
         if(localStorage.getItem('git_token')) document.getElementById('git-token').value = localStorage.getItem('git_token');
         if(localStorage.getItem('git_user')) document.getElementById('git-user').value = localStorage.getItem('git_user');
@@ -257,16 +351,30 @@
         panel.style.display = (panel.style.display === 'grid') ? 'none' : 'grid';
     }
 
+    // Рендер сторінок з урахуванням екрану
     function renderSpread() {
         const leftIdx = currentSpread * 2;
         const rightIdx = currentSpread * 2 + 1;
+        
         if (bookData.pages[leftIdx] === undefined) bookData.pages[leftIdx] = "";
         if (bookData.pages[rightIdx] === undefined) bookData.pages[rightIdx] = "";
 
         leftDOM.innerText = bookData.pages[leftIdx];
         rightDOM.innerText = bookData.pages[rightIdx];
 
-        document.getElementById('spread-indicator').innerText = `Розворот: ${currentSpread + 1} (Сторінки ${leftIdx + 1}-${rightIdx + 1})`;
+        if (isMobile) {
+            // На мобілках показуємо лише одну з двох сторінок залежно від того, де фокус
+            // За замовчуванням показуємо ліву сторінку непарного номера
+            leftContainer.classList.remove('mobile-hidden');
+            rightContainer.classList.add('mobile-hidden');
+            document.getElementById('spread-indicator').innerText = `Сторінка ${leftIdx + 1}`;
+        } else {
+            // На ПК показуємо обидві сторінки
+            leftContainer.classList.remove('mobile-hidden');
+            rightContainer.classList.remove('mobile-hidden');
+            document.getElementById('spread-indicator').innerText = `Розворот: ${currentSpread + 1} (Сторінки ${leftIdx + 1}-${rightIdx + 1})`;
+        }
+        
         document.getElementById('prev-btn').disabled = (currentSpread === 0);
     }
 
@@ -276,7 +384,13 @@
 
         if (dom.scrollHeight > dom.clientHeight) {
             if (side === 'left') {
-                bookData.pages[idx] = dom.innerText; 
+                bookData.pages[idx] = dom.innerText;
+                if (isMobile) {
+                    // Перемикаємо екран телефону на праву сторінку
+                    leftContainer.classList.add('mobile-hidden');
+                    rightContainer.classList.remove('mobile-hidden');
+                    document.getElementById('spread-indicator').innerText = `Сторінка ${currentSpread * 2 + 2}`;
+                }
                 rightDOM.focus();
             } else {
                 bookData.pages[idx] = dom.innerText;
@@ -298,6 +412,24 @@
     function changeSpread(direction) {
         bookData.pages[currentSpread * 2] = leftDOM.innerText;
         bookData.pages[currentSpread * 2 + 1] = rightDOM.innerText;
+        
+        if (isMobile) {
+            // Якщо ми на мобільці і дивимось праву сторінку, натискання "Назад" поверне на ліву сторінку ЦЬОГО Ж розвороту
+            if (direction === -1 && leftContainer.classList.contains('mobile-hidden')) {
+                rightContainer.classList.add('mobile-hidden');
+                leftContainer.classList.remove('mobile-hidden');
+                document.getElementById('spread-indicator').innerText = `Сторінка ${currentSpread * 2 + 1}`;
+                return;
+            }
+            // Якщо ми на лівій сторінці і тиснемо "Вперед", покажемо праву сторінку цього ж розвороту
+            if (direction === 1 && rightContainer.classList.contains('mobile-hidden')) {
+                leftContainer.classList.add('mobile-hidden');
+                rightContainer.classList.remove('mobile-hidden');
+                document.getElementById('spread-indicator').innerText = `Сторінка ${currentSpread * 2 + 2}`;
+                return;
+            }
+        }
+
         currentSpread += direction;
         if (currentSpread < 0) currentSpread = 0;
         renderSpread();
@@ -309,27 +441,23 @@
         bookData.pages[currentSpread * 2 + 1] = rightDOM.innerText;
     }
 
-    // --- ЛОКАЛЬНЕ СКАЧУВАННЯ НА ПКА ---
     function downloadBackupJSON() {
         syncCurrentState();
         const jsonString = JSON.stringify(bookData, null, 4);
         const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        
         const safeTitle = bookData.title ? bookData.title.replace(/\s+/g, '_') : "manga";
         link.download = `${safeTitle}_story_backup.json`;
         link.click();
     }
 
-    // --- ІНТЕГРАЦІЯ З GITHUB API ---
     function getGitParams() {
         const token = document.getElementById('git-token').value;
         const user = document.getElementById('git-user').value;
         const repo = document.getElementById('git-repo').value;
         const file = document.getElementById('git-file').value || "manga_story_data.json";
 
-        // Зберігаємо налаштування в браузері
         localStorage.setItem('git_token', token);
         localStorage.setItem('git_user', user);
         localStorage.setItem('git_repo', repo);
@@ -341,76 +469,49 @@
     async function loadFromGitHub() {
         const p = getGitParams();
         if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
-
         const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
         try {
-            const res = await fetch(url, {
-                headers: { 'Authorization': `token ${p.token}` }
-            });
-            if(res.status === 404) {
-                alert("Файл не знайдено в репозиторії. Буде створено новий при збереженні.");
-                return;
-            }
+            const res = await fetch(url, { headers: { 'Authorization': `token ${p.token}` } });
+            if(res.status === 404) return alert("Файл не знайдено в репозиторії.");
             const data = await res.json();
-            fileSha = data.sha; // запам'ятовуємо SHA версію
-            
-            // Декодуємо контент з base64
+            fileSha = data.sha;
             const decodedContent = decodeURIComponent(escape(atob(data.content)));
             bookData = JSON.parse(decodedContent);
             titleDOM.value = bookData.title || "";
             currentSpread = 0;
             renderSpread();
-            alert("☁️ Дані успішно завантажено з GitHub!");
-        } catch(err) {
-            alert("Помилка завантаження. Перевірте токен або назву репозиторію.");
-        }
+            alert("☁️ Сюжет завантажено!");
+        } catch(err) { alert("Помилка завантаження."); }
     }
 
     async function saveToGitHub() {
         const p = getGitParams();
         if(!p.token || !p.user || !p.repo) return alert("Заповніть налаштування GitHub!");
-
         syncCurrentState();
         const jsonString = JSON.stringify(bookData, null, 4);
-        // Кодуємо в base64 з підтримкою кирилиці
         const b64Content = btoa(unescape(encodeURIComponent(jsonString)));
-
         const url = `https://api.github.com/repos/${p.user}/${p.repo}/contents/${p.file}`;
         
-        // Спочатку робимо запит щоб отримати актуальний SHA, якщо файл вже є
         try {
             const checkRes = await fetch(url, { headers: { 'Authorization': `token ${p.token}` } });
-            if(checkRes.ok) {
-                const checkData = await checkRes.json();
-                fileSha = checkData.sha;
-            }
+            if(checkRes.ok) { const checkData = await checkRes.json(); fileSha = checkData.sha; }
         } catch(e) {}
 
-        const bodyData = {
-            message: "Оновлення сюжету манги via Manga Book App",
-            content: b64Content
-        };
+        const bodyData = { message: "Update via Mobile Manga App", content: b64Content };
         if(fileSha) bodyData.sha = fileSha;
 
         try {
             const res = await fetch(url, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `token ${p.token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `token ${p.token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyData)
             });
             if(res.ok) {
                 const resData = await res.json();
                 fileSha = resData.content.sha;
-                alert("💾 Сюжет успішно синхронізовано та збережено на GitHub!");
-            } else {
-                alert("Помилка збереження. Перевірте права токена.");
-            }
-        } catch(err) {
-            alert("Не вдалося підключитися до GitHub API.");
-        }
+                alert("💾 Успішно збережено на GitHub!");
+            } else { alert("Помилка збереження."); }
+        } catch(err) { alert("Помилка мережі."); }
     }
 </script>
 </body>
